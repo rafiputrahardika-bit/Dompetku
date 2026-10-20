@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173f35">
+<title>DompetKu — Keuangan Pribadi</title>
+<style>
+:root{--bg:#f4f7f5;--card:#fff;--ink:#182b25;--muted:#6c7c75;--green:#1c6b50;--line:#e2eae5;--red:#b84b4b;--gold:#b88627}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#173f35;color:white;padding:24px 18px 28px;border-radius:0 0 24px 24px}
+.wrap{max-width:850px;margin:auto}header .eyebrow{opacity:.78;font-size:12px;letter-spacing:.08em;text-transform:uppercase}h1{margin:5px 0 3px;font-size:27px}header p{margin:0;color:#d2e6dc}
+main{padding:16px;max-width:850px;margin:auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 3px 12px #153d2d08}.label{color:var(--muted);font-size:12px}.money{font-size:clamp(18px,4vw,24px);font-weight:750;overflow-wrap:anywhere;margin-top:6px}.income{color:var(--green)}.expense{color:var(--red)}.saving{color:#89621b}
+section{margin-top:16px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px}h2{font-size:17px;margin:0}button{border:0;border-radius:11px;padding:11px 13px;background:var(--green);color:white;font-weight:650;font-size:14px;cursor:pointer}button.secondary{background:#e7f0eb;color:var(--green)}button.danger{background:#faeaea;color:var(--red)}.recommend{background:#e8f2ec;border:1px solid #d2e5d8;border-radius:16px;padding:16px}.recommend .money{font-size:27px;color:#185d43}.recommend p{margin:8px 0 0;color:#496458;line-height:1.5;font-size:13px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;color:var(--muted);font-size:12px}input,select{width:100%;margin-top:5px;border:1px solid #d7e2db;border-radius:10px;background:white;padding:11px;font:inherit;color:var(--ink)}.full{grid-column:1/-1}.radio-row{display:flex;gap:8px}.radio-row button{flex:1}.radio-row .chosen{outline:2px solid #9dcab0;background:#104c39}.hint{font-size:12px;color:var(--muted);line-height:1.5}.transactions{display:flex;flex-direction:column;gap:8px}.tx{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}.tx-title{font-weight:650}.tx-sub{font-size:12px;color:var(--muted);margin-top:3px}.tx-amount{font-weight:750;white-space:nowrap}.empty{color:var(--muted);padding:14px 0;font-size:14px}.bar{height:9px;background:#e7eee9;border-radius:9px;overflow:hidden;margin-top:9px}.bar>div{height:100%;background:var(--green);width:0}.footer{font-size:11px;color:var(--muted);text-align:center;padding:22px 10px}
+@media(min-width:620px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}main{padding-top:22px}.card{padding:17px}}
+</style>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Keuangan pribadi</div><h1>DompetKu</h1><p>Atur uangmu, selangkah demi selangkah.</p></div></header>
+<main>
+  <div class="section-head"><h2>Ringkasan bulan ini</h2><input id="month" type="month" aria-label="Pilih bulan" style="width:auto;max-width:160px;margin:0"></div>
+  <div class="grid">
+    <div class="card"><div class="label">Pemasukan</div><div class="money income" id="totalIn">Rp0</div></div>
+    <div class="card"><div class="label">Pengeluaran</div><div class="money expense" id="totalOut">Rp0</div></div>
+    <div class="card"><div class="label">Sisa uang</div><div class="money" id="balance">Rp0</div></div>
+    <div class="card"><div class="label">Tabungan tercatat</div><div class="money saving" id="totalSaved">Rp0</div></div>
+  </div>
+  <section class="recommend">
+    <div class="label">Rekomendasi tabungan adaptif</div>
+    <div class="money" id="suggestion">Rp0</div>
+    <p id="suggestionText">Catat pemasukan dan pengeluaran agar rekomendasi bisa dihitung.</p>
+    <div class="bar"><div id="saveBar"></div></div>
+    <p class="hint">Ini saran awal, bukan aturan wajib. Pastikan kebutuhan pokok dan tagihan aman terlebih dahulu.</p>
+  </section>
+  <section class="card">
+    <div class="section-head"><h2>Tambah transaksi</h2></div>
+    <form id="txForm">
+      <div class="full"><label>Jenis transaksi</label><div class="radio-row" style="margin-top:6px"><button type="button" id="incomeBtn" class="chosen">Pemasukan</button><button type="button" id="expenseBtn" class="secondary">Pengeluaran</button><button type="button" id="savingBtn" class="secondary">Tabungan</button></div></div>
+      <div><label for="amount">Nominal (Rp)</label><input id="amount" type="number" min="1" step="1" placeholder="Contoh: 50000" required></div>
+      <div><label for="date">Tanggal</label><input id="date" type="date" required></div>
+      <div><label for="category">Kategori</label><select id="category"></select></div>
+      <div><label for="note">Catatan (opsional)</label><input id="note" maxlength="70" placeholder="Contoh: makan siang"></div>
+      <button class="full" type="submit">Simpan transaksi</button>
+    </form>
+    <p class="hint">Data disimpan di browser perangkat ini. Untuk versi awal, belum tersinkron otomatis ke perangkat lain.</p>
+  </section>
+  <section class="card">
+    <div class="section-head"><h2>Riwayat transaksi</h2><button class="secondary" id="exportBtn" type="button">Ekspor CSV</button></div>
+    <div class="transactions" id="transactions"><div class="empty">Belum ada transaksi. Tambahkan transaksi pertamamu.</div></div>
+  </section>
+  <div class="footer">DompetKu versi awal • Catatanmu tersimpan lokal di browser ini.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
+const today=new Date(); const localDate=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$('month').value=localDate.slice(0,7); $('date').value=localDate;
+let kind='income';
+let txs=[]; try{txs=JSON.parse(localStorage.getItem('dompetku_transactions')||'[]')}catch(e){txs=[]}
+const cats={
+ income:['Gaji','Uang saku','Bonus','Freelance','Lainnya'],
+ expense:['Makan & minum','Transportasi','Tagihan','Belanja','Pendidikan','Kesehatan','Hiburan','Keluarga','Lainnya'],
+ saving:['Tabungan umum','Dana darurat','Target khusus','Investasi']
+};
+function setKind(k){kind=k;[['income','incomeBtn'],['expense','expenseBtn'],['saving','savingBtn']].forEach(([v,id])=>{$(id).className=v===k?'chosen':'secondary'});$('category').innerHTML=cats[k].map(c=>`<option>${c}</option>`).join('')}
+$('incomeBtn').onclick=()=>setKind('income');$('expenseBtn').onclick=()=>setKind('expense');$('savingBtn').onclick=()=>setKind('saving');setKind('income');
+$('txForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('amount').value);if(!Number.isFinite(amount)||amount<=0)return;txs.unshift({id:Date.now(),kind,amount,date:$('date').value,category:$('category').value,note:$('note').value.trim()});persist();$('amount').value='';$('note').value='';render()});
+function persist(){localStorage.setItem('dompetku_transactions',JSON.stringify(txs))}
+$('month').addEventListener('change',render);
+function render(){
+ const m=$('month').value;const list=txs.filter(t=>t.date.startsWith(m));
+ const sum=k=>list.filter(t=>t.kind===k).reduce((s,t)=>s+t.amount,0);
+ const inc=sum('income'),out=sum('expense'),saved=sum('saving'),bal=inc-out-saved;
+ $('totalIn').textContent=rupiah(inc);$('totalOut').textContent=rupiah(out);$('balance').textContent=rupiah(bal);$('totalSaved').textContent=rupiah(saved);
+ // Adaptive starter suggestion: preserve a small buffer for essentials; suggest up to 20% of positive remainder after expenses, capped at 20% income.
+ const remainder=Math.max(0,inc-out-saved);
+ const suggested=Math.floor(Math.min(remainder*.2,inc*.2));
+ $('suggestion').textContent=rupiah(suggested);
+ if(inc===0){$('suggestionText').textContent='Mulai dengan mencatat pemasukan. Setelah ada data, saran tabungan akan dihitung berdasarkan sisa uang.'}
+ else if(bal<=0){$('suggestionText').textContent='Pengeluaran dan tabungan tercatat sudah menyamai atau melebihi pemasukan. Prioritaskan kebutuhan penting dulu; tidak perlu memaksakan menabung bulan ini.'}
+ else if(out===0){$('suggestionText').textContent='Belum ada pengeluaran tercatat. Catat kebutuhan dan tagihan dulu agar saran tabungan lebih realistis.'}
+ else {$('suggestionText').textContent=`Saran awal sekitar 20% dari sisa uang setelah pengeluaran dan tabungan yang tercatat. Sisa setelah pengeluaran: ${rupiah(inc-out)}. Sesuaikan jika masih ada tagihan atau kebutuhan yang belum dicatat.`}
+ $('saveBar').style.width=(inc>0?Math.min(100,(saved/inc)*100):0)+'%';
+ const box=$('transactions');box.innerHTML='';
+ if(!list.length){box.innerHTML='<div class="empty">Belum ada transaksi untuk bulan ini.</div>';return}
+ list.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).forEach(t=>{const row=document.createElement('div');row.className='tx';const left=document.createElement('div');const title=document.createElement('div');title.className='tx-title';title.textContent=t.note||t.category;const sub=document.createElement('div');sub.className='tx-sub';sub.textContent=`${t.date} • ${{income:'Pemasukan',expense:'Pengeluaran',saving:'Tabungan'}[t.kind]} • ${t.category}`;left.append(title,sub);const right=document.createElement('div');right.style.display='flex';right.style.alignItems='center';right.style.gap='8px';const amt=document.createElement('div');amt.className='tx-amount '+(t.kind==='income'?'income':t.kind==='expense'?'expense':'saving');amt.textContent=(t.kind==='income'?'+':t.kind==='expense'?'-':'↗ ')+rupiah(t.amount);const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='Hapus';del.onclick=()=>{if(confirm('Hapus transaksi ini?')){txs=txs.filter(x=>x.id!==t.id);persist();render()}};right.append(amt,del);row.append(left,right);box.append(row)})
+}
+$('exportBtn').onclick=()=>{const m=$('month').value;const rows=[['Tanggal','Jenis','Kategori','Catatan','Nominal'],...txs.filter(t=>t.date.startsWith(m)).map(t=>[t.date,t.kind,t.category,t.note,t.amount])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dompetku-'+m+'.csv';a.click();URL.revokeObjectURL(a.href)};
+render();
+</script>
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
+</script>
+</body></html>

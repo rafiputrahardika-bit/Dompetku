@@ -1,0 +1,28 @@
+DOMPETKU — VERSI SIAP DIPASANG DI ANDROID (PWA)
+
+PENTING:
+Ini adalah PWA (aplikasi web yang bisa dipasang dari Chrome), bukan APK. PWA bisa muncul di layar utama dan dapat dibuka seperti aplikasi. Agar tombol instalasi dan mode offline berfungsi, file harus di-host di alamat HTTPS. Membuka index.html langsung dari file manager tidak cukup untuk instalasi PWA.
+
+LANGKAH PALING MUDAH:
+1. Upload isi folder ini ke hosting statis HTTPS, misalnya GitHub Pages.
+2. Buka URL situs tersebut di Chrome pada HP Android.
+3. Tekan menu titik tiga (⋮) Chrome.
+4. Pilih "Install app" atau "Tambahkan ke layar utama".
+5. Ikuti instruksi sampai ikon DompetKu muncul di layar utama.
+
+PILIHAN HOSTING GRATIS: GitHub Pages
+1. Buat akun GitHub jika belum punya.
+2. Buat repository baru bernama dompetku.
+3. Upload 4 file ini ke root repository: index.html, manifest.webmanifest, sw.js, icon.svg.
+4. Buka Settings > Pages.
+5. Pada Build and deployment, pilih Deploy from a branch, branch main, folder /(root), lalu Save.
+6. Tunggu sampai URL Pages tersedia. Buka URL itu di Chrome Android dan pasang aplikasi.
+
+DATA & PRIVASI:
+- Transaksi disimpan di penyimpanan browser lokal (localStorage) pada perangkat itu.
+- Data tidak otomatis tersinkron ke laptop/HP lain.
+- Jangan gunakan mode incognito. Menghapus data situs/browser dapat menghapus transaksi.
+- Sebelum memasukkan data sensitif, pahami bahwa prototipe ini belum memiliki akun, PIN, backup cloud, atau enkripsi khusus.
+
+REKOMENDASI TABUNGAN:
+Perhitungan saat ini merupakan saran awal sederhana berdasarkan transaksi yang dicatat, bukan nasihat keuangan profesional.
