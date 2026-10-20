@@ -1,0 +1,21 @@
+{
+  "name": "DompetKu - Keuangan Pribadi",
+  "short_name": "DompetKu",
+  "description": "Catat pemasukan, pengeluaran, dan rencanakan tabungan pribadi.",
+  "start_url": "/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#166534",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "dir": "auto",
+  "lang": "id"
+}
